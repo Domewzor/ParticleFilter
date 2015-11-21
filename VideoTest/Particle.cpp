@@ -28,6 +28,11 @@ int Particle::GetX()
 	return x;
 }
 
+int Particle::GetY()
+{
+	return y;
+}
+
 char* Particle::ToString()
 {
 	return "Particle";

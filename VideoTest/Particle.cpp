@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Particle.h"
-#include <stdio.h>
-#include <string.h>
+
 
 Particle::Particle() : Particle(0, 0)
 {
@@ -12,11 +11,11 @@ Particle::Particle(int xPos, int yPos) : x{ xPos }, y{ yPos }
 	weight = 0;
 }
 
-Particle::Particle(int xPos, int yPos, int w) : x{ xPos }, y{ yPos }, weight{ w }
+Particle::Particle(int xPos, int yPos, double w) : x{ xPos }, y{ yPos }, weight{ w }
 {
 }
 
-void Particle::SetProps(int xPos, int yPos, int w)
+void Particle::SetProps(int xPos, int yPos, double w)
 {
 	x = xPos;
 	y = yPos;
@@ -31,6 +30,21 @@ int Particle::GetX()
 int Particle::GetY()
 {
 	return y;
+}
+
+cv::Point Particle::GetPoint()
+{
+	return cv::Point(x, y);
+}
+
+double Particle::GetWeight()
+{
+	return weight;
+}
+
+void Particle::SetWeight(double w)
+{
+	weight = w;
 }
 
 char* Particle::ToString()

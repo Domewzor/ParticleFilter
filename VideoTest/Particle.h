@@ -1,16 +1,23 @@
+#include <stdio.h>
+#include <string.h>
+#include <opencv2/highgui/highgui.hpp>
+
 #pragma once
 class Particle
 {
 private:
-	int x, y, weight;
+	int x, y;
+	double weight;
 public:
 	Particle();
 	Particle(int, int);
-	Particle(int, int, int);
-	void SetProps(int, int, int);
+	Particle(int, int, double);
+	void SetProps(int, int, double);
 	int GetX();
 	int GetY();
-	int GetWeight();
+	cv::Point GetPoint();
+	double GetWeight();
+	void SetWeight(double);
 	char* ToString();
 	virtual ~Particle();
 };

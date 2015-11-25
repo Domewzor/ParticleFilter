@@ -8,6 +8,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "Particle.h"
 
+double probability(Particle, cv::Vec3b, int, int);
+double normal_pdf(double, double, double);
+
 int main(int argc, char* argv[])
 {
 	int N = 100;
@@ -17,31 +20,44 @@ int main(int argc, char* argv[])
 	int pos = 58;
 	int t = 75;
 
-	std::random_device                  rand_dev;
-	std::mt19937                        generator(rand_dev());
-	std::uniform_int_distribution<int>  distrX(0, 640);
-	std::uniform_int_distribution<int>  distrY(0, 480);
+	
 	
 	cv::Mat src_img1;
 
 	src_img1 = cv::imread("square30_1.jpg", 1);
 
+	std::random_device                  rand_dev;
+	std::mt19937                        generator(rand_dev());
+	std::uniform_int_distribution<int>  distrX(0, src_img1.cols - 1);
+	std::uniform_int_distribution<int>  distrY(0, src_img1.rows - 1);
+
 	int k = 0, x = 0, y = 0;
 
+	// Iterating through all generated particles
 	for (int i = 0; i < N; i++)
 	{
-		p[i].SetProps(distrX(generator), distrY(generator), 0);		
-		//printf("%d, %s", p[i].GetX(), p[i].ToString());
+		// Sets properties of particles, uses uniform distribution across the picture
+		p[i].SetProps(distrX(generator), distrY(generator), 0);	
 		x = p[i].GetX();
 		y = p[i].GetY();
-		std::cout << i << ": " << x << ", " << y << std::endl;
-		cv::Point3_<uchar>* p = src_img1.ptr<cv::Point3_<uchar> >(y, x);
+		std::cout << i << ": " << x << ", " << y;
+
+		// Gets color of pixel where particle is
+		cv::Vec3b particleColor = src_img1.at<cv::Vec3b>(y, x);
+
+		p[i].SetWeight(probability(p[i], particleColor, src_img1.cols, src_img1.rows));
+		std::cout << "; " << p[i].GetWeight() << std::endl;
+
+		// Visualization of particles
+		// makes a white dot for a particle 
+		/*cv::Point3_<uchar>* p = src_img1.ptr<cv::Point3_<uchar> >(y, x);
 		p->x = 255;
 		p->y = 255;
-		p->z = 255;
+		p->z = 255;*/
+
+		// draws a bigger dot for a particle
 		cv::circle(src_img1, cv::Point(x, y), 2, cv::Scalar(0, 0, 255), -1, 8, 0);
-		//src_img1.at<cv::Vec3b>(cv::Point(x, y)) = color;
-		//src_img1.at<uchar>(p[i].GetX(), p[i].GetY()) = static_cast<uchar>(255);
+		
 	}
 	
 	printf("\n");
@@ -50,6 +66,39 @@ int main(int argc, char* argv[])
 	cv::waitKey(0);
 	
 	return 0;
+}
+
+double probability(Particle p, cv::Vec3b particleColor, int imgWidth, int imgHeight)
+{
+	cv::Scalar referenceColor = { 1, 240, 253 };
+	cv::Scalar distanceVector = { 255, 255, 255 };
+	cv::Point loc = p.GetPoint();
+
+	if (loc.x >= 0 && loc.x < imgWidth && loc.y >= 0 && loc.y < imgHeight)
+	{
+		distanceVector = { referenceColor[0] - particleColor[0],
+			referenceColor[1] - particleColor[1],
+			referenceColor[2] - particleColor[2] };
+	}
+
+	double distance = sqrt(distanceVector[0] * distanceVector[0] + distanceVector[1] * distanceVector[1] + distanceVector[2] * distanceVector[2]);
+
+	//printf(" distance: %f", distance);
+
+	int mean = 0;
+	int stdDev = 1;
+
+	double probability = normal_pdf(distance, mean, stdDev);
+
+	return probability;
+}
+
+double normal_pdf(double x, double m, double s)
+{
+	static const double inv_sqrt_2pi = 0.3989422804014327;
+	double a = (x - m) / s;
+
+	return inv_sqrt_2pi / s * std::exp(-0.5f * a * a);
 }
 
 // video usage

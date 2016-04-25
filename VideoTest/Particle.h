@@ -7,7 +7,11 @@ class Particle
 {
 private:
 	int x, y;
-	double weight;
+	float weight;
+	float colorDist;
+	cv::Mat histR;
+	cv::Mat histG;
+	cv::Mat histB;
 public:
 	Particle();
 	Particle(int, int);
@@ -16,8 +20,14 @@ public:
 	int GetX();
 	int GetY();
 	cv::Point GetPoint();
-	double GetWeight();
-	void SetWeight(double);
+	float GetWeight();
+	void SetWeight(float);
+	float getColorDist();
+	void setColorDist(float);
+	void SetHist(cv::Mat, cv::Mat, cv::Mat);
+	cv::Mat GetHistR();
+	cv::Mat GetHistG();
+	cv::Mat GetHistB();
 	char* ToString();
 	virtual ~Particle();
 };

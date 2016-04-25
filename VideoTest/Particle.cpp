@@ -37,14 +37,46 @@ cv::Point Particle::GetPoint()
 	return cv::Point(x, y);
 }
 
-double Particle::GetWeight()
+float Particle::GetWeight()
 {
 	return weight;
 }
 
-void Particle::SetWeight(double w)
+void Particle::SetWeight(float w)
 {
 	weight = w;
+}
+
+float Particle::getColorDist()
+{
+	return colorDist;
+}
+
+void Particle::setColorDist(float cDist)
+{
+	colorDist = cDist;
+}
+
+void Particle::SetHist(cv::Mat histMatR, cv::Mat histMatG, cv::Mat histMatB)
+{
+	histR = histMatR;
+	histG = histMatG;
+	histB = histMatB;
+}
+
+cv::Mat Particle::GetHistR()
+{
+	return histR;
+}
+
+cv::Mat Particle::GetHistG()
+{
+	return histG;
+}
+
+cv::Mat Particle::GetHistB()
+{
+	return histB;
 }
 
 char* Particle::ToString()
